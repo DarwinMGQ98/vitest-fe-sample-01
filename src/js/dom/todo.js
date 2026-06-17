@@ -1,4 +1,4 @@
-import { validarTexto, formatearTexto } from '../utils/texto.js';
+import { validarTexto, formatearTexto, contarPalabras } from '../utils/texto.js';
 
 /**
  * Crea un elemento <li> que representa una tarea.
@@ -44,6 +44,10 @@ export function agregarTarea(texto, lista) {
 
   if (!validacion.valido) {
     return { exito: false, error: validacion.error };
+  }
+
+  if (contarPalabras(texto) < 2) {
+    return { exito: false, error: 'La tarea debe contener al menos 2 palabras.' };
   }
 
   const formateado = formatearTexto(texto);

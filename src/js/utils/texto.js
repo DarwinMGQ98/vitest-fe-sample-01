@@ -53,3 +53,22 @@ export function formatearTexto(texto) {
 
   return recortado.charAt(0).toUpperCase() + recortado.slice(1).toLowerCase();
 }
+
+/**
+ * Cuenta el número de palabras en un texto.
+ *
+ * @param {string} texto - El texto a contar.
+ * @returns {number} Número de palabras (0 si el texto está vacío).
+ * @throws {Error} Si el argumento no es una cadena válida.
+ */
+export function contarPalabras(texto) {
+  if (texto === null || texto === undefined) {
+    throw new Error('El texto no puede ser nulo o indefinido.');
+  }
+  if (typeof texto !== 'string') {
+    throw new Error('El argumento debe ser un texto (string).');
+  }
+  const recortado = texto.trim();
+  if (recortado.length === 0) return 0;
+  return recortado.split(/\s+/).length;
+}

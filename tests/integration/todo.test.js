@@ -41,7 +41,32 @@ describe('agregarTarea', () => {
     expect(lista.querySelector('.tarea-texto').textContent).toBe('Aprender vitest');
   });
 
-  
+  // Tarea 2 — límite de 200 caracteres
+  it('debe retornar error cuando el texto supera los 200 caracteres', () => {
+    const textoLargo = 'A'.repeat(201);
+    const resultado = agregarTarea(textoLargo, lista);
+
+    expect(resultado.exito).toBe(false);
+    expect(resultado.error).toBe('El texto no puede exceder los 200 caracteres.');
+    expect(lista.children.length).toBe(0);
+  });
+
+  // Tarea 3 — mínimo de 2 palabras
+  it('debe retornar error cuando la tarea tiene una sola palabra', () => {
+    const resultado = agregarTarea('Estudiar', lista);
+
+    expect(resultado.exito).toBe(false);
+    expect(resultado.error).toBe('La tarea debe contener al menos 2 palabras.');
+    expect(lista.children.length).toBe(0);
+  });
+
+  it('debe agregar correctamente una tarea con exactamente 2 palabras', () => {
+    const resultado = agregarTarea('Lavar ropa', lista);
+
+    expect(resultado.exito).toBe(true);
+    expect(lista.children.length).toBe(1);
+    expect(lista.querySelector('.tarea-texto').textContent).toBe('Lavar ropa');
+  });
 });
 
 describe('eliminarTarea', () => {
@@ -52,6 +77,18 @@ describe('eliminarTarea', () => {
 
     eliminarTarea(li);
     expect(lista.children.length).toBe(0);
+  });
+
+  // Tarea 2 — eliminación con múltiples elementos
+  it('debe eliminar el elemento correcto cuando hay múltiples tareas', () => {
+    const lista = crearLista();
+    agregarTarea('Primera tarea', lista);
+    agregarTarea('Segunda tarea', lista);
+    const items = lista.querySelectorAll('.tarea-item');
+
+    eliminarTarea(items[0]);
+    expect(lista.children.length).toBe(1);
+    expect(lista.querySelector('.tarea-texto').textContent).toBe('Segunda tarea');
   });
 });
 
@@ -65,7 +102,19 @@ describe('alternarTarea', () => {
     expect(li.classList.contains('completada')).toBe(true);
   });
 
-  
+  // Tarea 2 — simulación de evento para desmarcar
+  it('debe quitar la clase "completada" al desmarcar el checkbox', () => {
+    const li = crearTareaElemento('Tarea test');
+    const checkbox = li.querySelector('.tarea-checkbox');
+
+    checkbox.checked = true;
+    alternarTarea(li, checkbox);
+    expect(li.classList.contains('completada')).toBe(true);
+
+    checkbox.checked = false;
+    checkbox.dispatchEvent(new Event('change'));
+    expect(li.classList.contains('completada')).toBe(false);
+  });
 });
 
 describe('limpiarCompletadas', () => {
@@ -86,7 +135,22 @@ describe('limpiarCompletadas', () => {
     expect(lista.querySelector('.tarea-texto').textContent).toBe('Tarea pendiente');
   });
 
-  
+  // Tarea 2 — limpiar todas cuando todas están completadas
+  it('debe eliminar todas las tareas cuando todas están completadas', () => {
+    const lista = crearLista();
+    agregarTarea('Tarea uno completada', lista);
+    agregarTarea('Tarea dos completada', lista);
+
+    lista.querySelectorAll('.tarea-item').forEach((item) => {
+      const checkbox = item.querySelector('.tarea-checkbox');
+      checkbox.checked = true;
+      alternarTarea(item, checkbox);
+    });
+
+    const eliminadas = limpiarCompletadas(lista);
+    expect(eliminadas).toBe(2);
+    expect(lista.children.length).toBe(0);
+  });
 });
 
 describe('actualizarContador', () => {
