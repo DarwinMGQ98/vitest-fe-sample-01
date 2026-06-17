@@ -181,5 +181,57 @@ describe('mostrarError', () => {
     expect(contenedor.textContent).toBe('Error de prueba');
   });
 
-  
+
+});
+
+// ============================================================
+// Pruebas adicionales — Tarea 2
+// ============================================================
+describe('Pruebas adicionales — Tarea 2', () => {
+  it('debe eliminar el <li> de la lista al hacer clic en el botón eliminar', () => {
+    const lista = document.createElement('ul');
+    agregarTarea('Tarea a borrar', lista);
+    const li = lista.querySelector('.tarea-item');
+    const btnEliminar = li.querySelector('.btn-eliminar');
+
+    btnEliminar.click();
+    expect(lista.children.length).toBe(0);
+  });
+
+  it('debe alternar la clase "completada" mediante evento change en el checkbox', () => {
+    const li = crearTareaElemento('Tarea evento change');
+    const checkbox = li.querySelector('.tarea-checkbox');
+
+    checkbox.checked = true;
+    checkbox.dispatchEvent(new Event('change'));
+    expect(li.classList.contains('completada')).toBe(true);
+
+    checkbox.checked = false;
+    checkbox.dispatchEvent(new Event('change'));
+    expect(li.classList.contains('completada')).toBe(false);
+  });
+
+  it('debe agregar correctamente una tarea con exactamente 200 caracteres', () => {
+    const lista = document.createElement('ul');
+    const texto = 'A'.repeat(99) + ' ' + 'B'.repeat(100); // 200 chars, 2 palabras
+    const resultado = agregarTarea(texto, lista);
+    expect(resultado.exito).toBe(true);
+    expect(lista.children.length).toBe(1);
+  });
+
+  it('debe dejar la lista vacía cuando todas las tareas están completadas', () => {
+    const lista = document.createElement('ul');
+    agregarTarea('Primera tarea completa', lista);
+    agregarTarea('Segunda tarea completa', lista);
+
+    lista.querySelectorAll('.tarea-item').forEach((item) => {
+      const checkbox = item.querySelector('.tarea-checkbox');
+      checkbox.checked = true;
+      alternarTarea(item, checkbox);
+    });
+
+    const eliminadas = limpiarCompletadas(lista);
+    expect(eliminadas).toBe(2);
+    expect(lista.children.length).toBe(0);
+  });
 });

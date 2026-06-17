@@ -90,3 +90,30 @@ describe('contarPalabras', () => {
     expect(() => contarPalabras(undefined)).toThrow('El texto no puede ser nulo o indefinido.');
   });
 });
+
+// ============================================================
+// Pruebas adicionales — Tarea 1
+// ============================================================
+describe('Pruebas adicionales — Tarea 1', () => {
+  it('debe retornar válido para texto con caracteres especiales, tildes y eñes', () => {
+    const resultado = validarTexto('árbol con niña 🌳');
+    expect(resultado.valido).toBe(true);
+    expect(resultado.error).toBe('');
+  });
+
+  it('debe retornar inválido para texto con 3 espacios y una letra ("   A")', () => {
+    const resultado = validarTexto('   A');
+    expect(resultado.valido).toBe(false);
+    expect(resultado.error).toBe('El texto debe tener al menos 3 caracteres.');
+  });
+
+  it('debe formatear "árbol" correctamente a "Árbol"', () => {
+    const resultado = formatearTexto('árbol');
+    expect(resultado).toBe('Árbol');
+  });
+
+  it('no debe alterar un texto que ya está correctamente formateado', () => {
+    const resultado = formatearTexto('Hola mundo');
+    expect(resultado).toBe('Hola mundo');
+  });
+});
